@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Fuentes de estilo propias -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
+    <!--Tema de Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sketchy/bootstrap.min.css" integrity="sha384-RxqHG2ilm4r6aFRpGmBbGTjsqwfqHOKy1ArsMhHusnRO47jcGqpIQqlQK/kmGy9R" crossorigin="anonymous">
+
+    <!--Fuente de google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <main class="container p-4">
+        <h1 class="display-4 text-center mt-4 titulo">APP DE GESTIÓN DE TAREAS</h1>
+
+        <div class="row">
+            <div class="col-md-6 offset-md-3 my-auto"> <!--Este div ocupará 4 columnas del espacio (centrado)-->
+                <div class="card"> <!--Creacion del objeto card-->
+                    <div class="card-header">
+                        <form action="/modificar/{{tarea.id}}", method="POST">
+                            <!-- Separamos el input del boton metiendo el input en este form-group
+                            para que los elementos no esten pegados y haya separacion entre ellos -->
+                            <div class="form-group d-flex">
+                                <input type="text" name="contenidoModoficadoTarea" placeholder="Modifica la tarea y selecciona una fecha" class="form-control" autofocus>
+                                <input type="date" name="fechaModificadaTarea" value={{fechaAModificar}}>
+                            </div>
+                            <button type="submit" class="btn btn-primary col-md-6 offset-md-3">
+                                <!-- btn btn-primary col-md-6 offset-md-3 para centrar el boton -->
+                                Modificar
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <!-- Clase que le da fondo color azul al texto a modificar -->
+                        <div class="alert alert-dismissible alert-info">
+                            <!-- Se mantienen las condicionales para que sean visibles en la modificacion si hay -->
+                            <small class="card alert-dismissible alert-info {% if fechaAModificar > tarea.fecha %} bg-danger {% endif %} text-right"> {{tarea.fecha}} </small>
+                            <span class="{% if tarea.hecha==true %} tareaHechaEstilo  {% endif %}">
+                            <h4 class="{% if tarea.importante==true %} tareaImportanteEstilo {% endif %}">
+                                {{ tarea.contenido }}
+                            </h4>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

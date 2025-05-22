@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Fuentes de estilo propias -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
+    <!--Tema de Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sketchy/bootstrap.min.css" integrity="sha384-RxqHG2ilm4r6aFRpGmBbGTjsqwfqHOKy1ArsMhHusnRO47jcGqpIQqlQK/kmGy9R" crossorigin="anonymous">
+
+    <!--Fuente de google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <main class="container p-4">
+        <h1 class="display-4 text-center mt-4 titulo">APP DE GESTIÓN DE TAREAS</h1>
+
+        <div class="row">
+            <div class="col-md-6 offset-md-3 my-auto"> <!--Este div ocupará 6 columnas del espacio (centrado)-->
+                <div class="card"> <!--Creacion del objeto card-->
+                    <div class="card-header">
+                        <form action="/crearTarea", method="POST">
+                            <!-- Separamos el input del boton metiendo el input en este form-group d-flex
+                            para que los elementos no esten pegados y haya separacion entre ellos  tambien se agragan calendario-->
+                            <div class="form-group d-flex">
+                                <input type="text" name="contenidoTarea" placeholder="Tarea" class="form-control" autofocus>
+                                <!-- etiqueta de calendario para la fecha tiene el valor por defecto de la fecha actual -->
+                                <input type="date" name="fechaTarea" value={{fechaActual}}>
+                            </div>
+                            <button type="submit" class="btn btn-primary col-md-6 offset-md-3">
+                                <!-- btn btn-primary col-md-6 offset-md-3 para que quede centrado -->
+                                Guardar
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group ">
+                            {% for tarea in listaDeTareas %}
+                            <li class="list-group-item ">
+                                <!-- Etiqueta para que la fecha este en su propio espacio y a la derecha con la condicion que este en rojo si se pas del dia previsto-->
+                                <small class="card border-light {% if fechaActual > tarea.fecha %} bg-danger {% endif %} text-right"> {{tarea.fecha}} </small>
+                                <!-- etiqueta para la condicion de si esta hecho -->
+                                <span class="{% if tarea.hecha==true %} tareaHechaEstilo  {% endif %}">
+                                    <!-- etiqueta h4 para agrandar el texto y colocar la condicion de si es importante -->
+                                   <h4 class="{% if tarea.importante==true %} tareaImportanteEstilo {% endif %}">
+                                       {{ tarea.contenido }}
+                                   </h4>
+                                </span>
+                                <div> <!-- Se cambia el tamaño a 1em y se agregan las clases para fondos de diferentes colores -->
+                                    <a href="/tareaHecha/{{tarea.id}}" style="text-decoration:none" class="btn btn-success btn-sm "> Hecho
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5z"/>
+                                            <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0"/>
+                                        </svg>
+                                    </a>
+                                    <a href="/tareaImportante/{{tarea.id}}" style="text-decoration:none" class="btn btn-warning btn-sm"> Importante
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-fire" viewBox="0 0 16 16">
+                                            <path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16m0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15"/>
+                                        </svg>
+                                    </a>
+                                    <!--  Modifica la tarea y se pasa el id de esta por la url-->
+                                    <a href="/modificarTarea?id={{tarea.id}}" name="" style="text-decoration:none" class="btn btn-info btn-sm"> Modificar
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="/tareaEliminar/{{tarea.id}}" style="text-decoration:none" class="btn btn-danger btn-sm"> Eliminar
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
